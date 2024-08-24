@@ -1,2 +1,49 @@
+# Node modules
 node_modules
-npm-debug.log
+
+# Build output
+.next
+out
+
+# Version control
+.git
+.gitignore
+
+# Environment files
+.env*
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Test coverage
+coverage
+
+# Temporary files
+tmp
+temp
+
+# Yarn
+.yarn
+.yarnrc
+.pnp.*
+
+# npm
+.npmrc
+
+# Docker
+Dockerfile
+.dockerignore
+
+# README and other documentation
+README.md
+*.md

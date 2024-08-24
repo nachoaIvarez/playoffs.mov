@@ -1,26 +1,26 @@
 # Use an official Node runtime as the base image
-FROM node:14
+FROM node:20.17.0
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package.json and yarn.lock
+COPY package.json yarn.lock ./
 
 # Install dependencies
-RUN npm install
+RUN yarn install --frozen-lockfile
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the application (if needed)
-# RUN npm run build
+# Build the application
+RUN yarn build
 
 # Expose the port the app runs on
 EXPOSE 3000
 
 # Command to run the application
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
 
 # Add a LABEL for the version
-LABEL version="0.0.0"
+LABEL version="1.0.0"
