@@ -38,3 +38,6 @@ next-env.d.ts
 
 # Yarn
 .yarn-integrity
+
+# Docker
+Dockerfile.bak
