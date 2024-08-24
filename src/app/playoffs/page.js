@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./Playoffs.module.css";
+import { formatDuration } from "@/lib/utils";
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -146,7 +147,7 @@ export default function Playoffs() {
               onClick={() => handleWinner(movie)}
             >
               <CardContent className="flex items-center p-2">
-                <div className="relative w-1/4 aspect-[2/3]">
+                <div className="relative w-24 h-36 flex-shrink-0">
                   <Image
                     src={
                       movie.Poster !== "N/A"
@@ -158,11 +159,19 @@ export default function Playoffs() {
                     className="object-cover rounded-md"
                   />
                 </div>
-                <div className="w-3/4 pl-2 flex flex-col justify-center">
-                  <p className="font-semibold text-sm line-clamp-2">
-                    {movie.Title}
+                <div className="flex-grow ml-3 flex flex-col justify-center">
+                  <p className="font-semibold text-sm line-clamp-1">
+                    {movie.Title}{" "}
+                    <span className="font-normal text-gray-500">
+                      ({movie.Year})
+                    </span>
                   </p>
-                  <p className="text-xs text-gray-500">({movie.Year})</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formatDuration(movie.Runtime)}
+                  </p>
+                  <p className="text-xs text-gray-500 line-clamp-5 mt-1">
+                    {movie.Plot}
+                  </p>
                 </div>
               </CardContent>
             </Card>

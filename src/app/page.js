@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { formatDuration } from "@/lib/utils";
 
 // Custom Input component to prevent zoom on mobile
 const CustomInput = React.forwardRef((props, ref) => {
@@ -107,17 +108,30 @@ export default function Home() {
   );
 
   const handleSelectMovie = useCallback(
-    (movie) => {
+    async (movie) => {
       if (activeSlotIndex !== null) {
-        setSlots((prevSlots) => {
-          const newSlots = [...prevSlots];
-          newSlots[activeSlotIndex] = { movie };
-          return newSlots;
-        });
-        setIsModalOpen(false);
-        setActiveSlotIndex(null);
-        setSearch("");
-        setSearchResults([]);
+        setIsLoading(true);
+        try {
+          // Fetch full movie details
+          const res = await fetch(
+            `/api/omdb?id=${encodeURIComponent(movie.imdbID)}`
+          );
+          const fullMovieDetails = await res.json();
+
+          setSlots((prevSlots) => {
+            const newSlots = [...prevSlots];
+            newSlots[activeSlotIndex] = { movie: fullMovieDetails };
+            return newSlots;
+          });
+          setIsModalOpen(false);
+          setActiveSlotIndex(null);
+          setSearch("");
+          setSearchResults([]);
+        } catch (error) {
+          console.error("Error fetching full movie details:", error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     },
     [activeSlotIndex]
@@ -165,7 +179,7 @@ export default function Home() {
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-8 sm:mb-12 text-center">
           Pick Your Movies
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 mb-12">
           {slots.map((slot, index) => (
             <Card key={index} className="overflow-hidden">
               <CardHeader className="p-4">
@@ -173,33 +187,45 @@ export default function Home() {
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 {slot.movie ? (
-                  <div className="flex flex-col items-center">
-                    <div className="relative w-full aspect-[2/3] mb-2">
-                      <Image
-                        src={
-                          slot.movie.Poster !== "N/A"
-                            ? slot.movie.Poster
-                            : "/placeholder-image.jpg"
-                        }
-                        alt={slot.movie.Title}
-                        fill
-                        className="object-cover rounded-md"
-                      />
+                  <div className="flex">
+                    <div className="w-1/3 mr-4">
+                      <div className="relative w-full aspect-[2/3]">
+                        <Image
+                          src={
+                            slot.movie.Poster !== "N/A"
+                              ? slot.movie.Poster
+                              : "/placeholder-image.jpg"
+                          }
+                          alt={slot.movie.Title}
+                          fill
+                          className="object-cover rounded-md"
+                        />
+                      </div>
                     </div>
-                    <p className="font-semibold text-sm text-center line-clamp-2 mb-1">
-                      {slot.movie.Title}
-                    </p>
-                    <p className="text-xs text-gray-500 mb-2">
-                      {slot.movie.Year}
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => removeMovie(index)}
-                    >
-                      Remove
-                    </Button>
+                    <div className="w-2/3 flex flex-col justify-between">
+                      <div>
+                        <p className="font-semibold text-sm mb-1 line-clamp-2">
+                          {slot.movie.Title}{" "}
+                          <span className="font-normal text-gray-500">
+                            ({slot.movie.Year})
+                          </span>
+                        </p>
+                        <div className="flex items-center text-xs text-gray-500 mb-1">
+                          <span>{formatDuration(slot.movie.Runtime)}</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mb-2 line-clamp-5">
+                          {slot.movie.Plot || "No description available."}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-2"
+                        onClick={() => removeMovie(index)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <Button
