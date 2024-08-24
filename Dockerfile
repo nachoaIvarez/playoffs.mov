@@ -21,3 +21,6 @@ EXPOSE 3000
 
 # Command to run the application
 CMD ["npm", "start"]
+
+# Add a LABEL for the version
+LABEL version="0.0.0"
