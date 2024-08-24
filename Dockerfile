@@ -23,4 +23,4 @@ EXPOSE 3000
 CMD ["yarn", "start"]
 
 # Add a LABEL for the version
-LABEL version="1.1.0"
+LABEL version="1.2.0"
