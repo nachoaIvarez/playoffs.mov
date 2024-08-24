@@ -62,11 +62,7 @@ export default function Home() {
     if (query && query.length >= 3) {
       setIsLoading(true);
       try {
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=90d7bc7b&s=${encodeURIComponent(
-            query
-          )}&type=movie&r=json`
-        );
+        const res = await fetch(`/api/omdb?query=${encodeURIComponent(query)}`);
         const data = await res.json();
         if (data.Search) {
           // Sort results by relevance and popularity
